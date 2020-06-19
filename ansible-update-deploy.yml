@@ -1,0 +1,8 @@
+---
+
+- name: Run update and install vault playbooks
+  hosts: all
+
+  roles:
+    - update-packages
+    - deploy-vault

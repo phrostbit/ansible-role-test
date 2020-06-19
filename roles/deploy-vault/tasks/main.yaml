@@ -1,0 +1,74 @@
+---
+
+  - name: Download Hashicorp Vault with SHA verification
+    get_url: 
+      url: https://releases.hashicorp.com/vault/1.4.2/vault_1.4.2_linux_amd64.zip
+      dest: /tmp/
+      checksum: sha256:f2bca89cbffb8710265eb03bc9452cc316b03338c411ba8453ffe7419390b8f1
+
+  - name: Install Unzip package
+    apt:
+      name: unzip
+      state: latest
+      update_cache: yes
+
+  - name: Unzip Hashicorp Vault
+    unarchive:
+      src: /tmp/vault_1.4.2_linux_amd64.zip
+      dest: /usr/local/bin/
+      remote_src: yes
+
+  - name: Enable Hashicorp Vault auto-complete install in .bashrc if it doesn't already exist
+    command: vault -autocomplete-install
+    ignore_errors: true
+
+  - name: Add the Vault system user
+    user:
+      name: vault
+      comment: System user account for Hashicorp Vault
+      home: /etc/vault
+      shell: /bin/false
+      system: yes
+      append: yes
+
+  - name: Create vault directory in /etc/ for Hashicorp Vault
+    file:
+      path: /etc/vault
+      state: directory
+      owner: vault
+      group: vault
+      mode: '0755'
+
+  - name: Recursively create vault directories in /var/lib/ for Hashicorp Vault
+    file:
+      path: /var/lib/vault/data
+      state: directory
+      owner: vault
+      group: vault
+      mode: '0755'
+
+  - name: Download Hashicorp Vault service configuration
+    get_url: 
+      url: https://raw.githubusercontent.com/phrostbit/ansible-playbooks/master/suppoting-files/vault.service
+      dest: /etc/systemd/system/
+
+  - name: Download Hashicorp config.hcl configuration
+    get_url: 
+      url: https://raw.githubusercontent.com/phrostbit/ansible-playbooks/master/suppoting-files/config.hcl
+      dest: /etc/vault/
+
+  - name: Reload systemd daemon
+    systemd:
+      daemon_reload: yes
+
+  - name: Enable and start vault.service
+    systemd:
+      name: vault.service
+      enabled: yes
+      state: started
+
+  - name: Export Hashicorp Vault URL
+    shell: "export VAULT_ADDR=http://{{ ansible_default_ipv4.address }}:8200"
+
+  - name: Export Hashicorp Vault URL
+    shell: echo "export VAULT_ADDR=http://{{ ansible_default_ipv4.address }}:8200" >> ~/.bashrc"
