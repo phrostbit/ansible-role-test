@@ -6,7 +6,7 @@
   vars:
     hashi_vault_version: 1.4.2
 #    hashi_vault_checksum: f2bca89cbffb8710265eb03bc9452cc316b03338c411ba8453ffe7419390b8f1
-    hashi_vault_checksum: "{{ lookup('hashi_vault', 'secret=/awx_variables/variables/:checksum') }}"
+    hashi_vault_checksum: "{{ lookup('hashi_vault', 'secret=/awx_variables/show/variables:checksum token=s.8gsZRA1plJ86YHSwEqTJTTYR url=http://192.168.10.21:8200') }}"
 
 
   roles:
