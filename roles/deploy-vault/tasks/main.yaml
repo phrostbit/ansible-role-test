@@ -2,9 +2,9 @@
 
   - name: Download Hashicorp Vault with SHA verification
     get_url: 
-      url: https://releases.hashicorp.com/vault/1.4.2/vault_1.4.2_linux_amd64.zip
+      url: "https://releases.hashicorp.com/vault/{{ hashi_vault_version }}/vault_{{ hashi_vault_version }}_linux_amd64.zip"
       dest: /tmp/
-      checksum: sha256:f2bca89cbffb8710265eb03bc9452cc316b03338c411ba8453ffe7419390b8f1
+      checksum: sha256:"{{ hashi_vault_checksum }}"
 
   - name: Install Unzip package
     apt:
@@ -14,7 +14,7 @@
 
   - name: Unzip Hashicorp Vault
     unarchive:
-      src: /tmp/vault_1.4.2_linux_amd64.zip
+      src: "/tmp/vault_{{ hashi_vault_version }}_linux_amd64.zip"
       dest: /usr/local/bin/
       remote_src: yes
 
@@ -47,15 +47,21 @@
       group: vault
       mode: '0755'
 
-  - name: Download Hashicorp Vault service configuration
-    get_url: 
-      url: https://raw.githubusercontent.com/phrostbit/ansible-playbooks/master/suppoting-files/vault.service
+  - name: Copy Hashicorp Vault service configuration
+    copy:
+      src: vault.service
       dest: /etc/systemd/system/
+      owner: root
+      group: root
+      mode: '0755'
 
-  - name: Download Hashicorp config.hcl configuration
-    get_url: 
-      url: https://raw.githubusercontent.com/phrostbit/ansible-playbooks/master/suppoting-files/config.hcl
+  - name: Copy Hashicorp Vault config.hcl configuration
+    copy:
+      src: config.hcl
       dest: /etc/vault/
+      owner: vault
+      group: vault
+      mode: '0755'
 
   - name: Reload systemd daemon
     systemd:
