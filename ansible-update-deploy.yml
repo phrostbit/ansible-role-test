@@ -5,7 +5,9 @@
 
   vars:
     hashi_vault_version: 1.4.2
-    hashi_vault_checksum: f2bca89cbffb8710265eb03bc9452cc316b03338c411ba8453ffe7419390b8f1
+#    hashi_vault_checksum: f2bca89cbffb8710265eb03bc9452cc316b03338c411ba8453ffe7419390b8f1
+    hashi_vault_checksum: "{{ lookup('hashi_vault', '/awx_variables/variables/:checksum') }}"
+
 
   roles:
     - update-packages

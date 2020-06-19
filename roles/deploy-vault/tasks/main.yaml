@@ -78,3 +78,8 @@
 
   - name: Export Hashicorp Vault URL
     shell: echo "export VAULT_ADDR=http://{{ ansible_default_ipv4.address }}:8200 >> ~/.bashrc"
+
+  - name: Recursively remove Hashicorp Vault data directory content for default installation
+    file:
+      path: /var/lib/vault/data/*
+      state: absent
